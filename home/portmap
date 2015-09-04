@@ -18,22 +18,32 @@ function dkr-portmap {
 		exit 2
 	fi
 
+	debug "using dockermachine ${machine_name}"
+
 	clear_old_docker_ports ${machine_name}
 	add_new_docker_ports ${machine_name}
 }
 
 function clear_old_docker_ports {
+	set +e
+	debug "clearing old docker ports"
 	portsToDelete=$(VBoxManage showvminfo $1 --details | grep -o 'docker-sync-port-[0-9][0-9]*')
 
 	for portToDelete in ${portsToDelete}; do
-		echo "deleting port: ${portToDelete} from: $1"
+		debug "deleting port: ${portToDelete}"
 		VBoxManage controlvm $1 natpf1 delete ${portToDelete}
 	done
+	set -e
 }
 
 function add_new_docker_ports {
+	debug "adding new docker ports"
+
+	set +e
 	count=0
 	for containerId in $(docker ps -q); do
+		containerName="$(docker inspect --format '{{.Name}}' ${containerId})"
+
 		IFS='
 '
 		for line in $(docker port ${containerId}); do
@@ -45,8 +55,9 @@ function add_new_docker_ports {
 			forwardType=$(echo ${hostPortAndType} | awk -F'/' '{ print $2 }')
 			guestPort=$(echo ${guestIpAndPort} | awk -F':' '{ print $2 }')
 
-			echo "docker-sync-port-${count},${forwardType},0.0.0.0,${guestPort},,${guestPort}"
+			err "forwarding port: ${guestPort} (${hostPort}) for ${containerName:1}"
 			VBoxManage controlvm $1 natpf1 "docker-sync-port-$count,${forwardType},0.0.0.0,${guestPort},,${guestPort}"
 		done
 	done
+	set -e
 }
