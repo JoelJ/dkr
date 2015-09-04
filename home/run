@@ -1,7 +1,12 @@
 #!/bin/bash
 
 function dkr-rn {
+	set -m
 	docker run "$@" &
 	2>/dev/null 1>/dev/null dkr-portmap
-	fg
+	2>/dev/null 1>/dev/null fg
+}
+
+function dkr-rn-summary_ {
+	echo "Runs like normal, and then immediately re-maps all the docker ports"
 }
