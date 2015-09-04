@@ -1,0 +1,36 @@
+
+function dkr-cleani {
+	images=$(docker images -q -f dangling=true)
+	if [ "$images" != "" ]; then
+		docker rmi $images
+	else
+		err "Nothing to clean"
+	fi
+}
+
+function dkr-cleani-summary_ {
+	echo "Cleans all dangling images"
+}
+
+function dkr-clean {
+	containers=$(docker ps -a | grep -E "Exited .*? ago" | awk '{ print $1 }')
+	if [ "$containers" != "" ]; then
+		docker rm $containers
+	else
+		err "Nothing to clean"
+	fi
+}
+
+function dkr-clean-summary_ {
+	echo "Deletes all stopped containers"
+}
+
+function dkr-rm {
+	docker stop "$@" > /dev/null
+	docker rm "$@"
+}
+
+function dkr-rm-summary_ {
+	echo "Stops and deletes the listed containers"
+}
+

@@ -1,0 +1,52 @@
+#!/bin/bash
+
+function dkr-portmap-summary_ {
+	echo "Maps the currently running containers' ports to the host machine. (Requires a VirtualBox DockerMachine)"
+}
+
+function dkr-portmap {
+	machine_name="$(docker-machine ls | grep -E '\*' | awk '{ print $1 }')"
+
+	if [ "${machine_name}" == "" ]; then
+		err "No docker-machine selected. Run \`eval \"\$(docker-machine env \$machine_name)\""
+		exit 1
+	fi
+
+	2>/dev/null 1>/dev/null VBoxManage showvminfo ${machine_name}
+	if [ "$?" != 0 ]; then
+		err "The current docker-machine selected (${machine_name}) is not a VirtualBox machine."
+		exit 2
+	fi
+
+	clear_old_docker_ports ${machine_name}
+	add_new_docker_ports ${machine_name}
+}
+
+function clear_old_docker_ports {
+	portsToDelete=$(VBoxManage showvminfo $1 --details | grep -o 'docker-sync-port-[0-9][0-9]*')
+
+	for portToDelete in ${portsToDelete}; do
+		echo "deleting port: ${portToDelete} from: $1"
+		VBoxManage controlvm $1 natpf1 delete ${portToDelete}
+	done
+}
+
+function add_new_docker_ports {
+	count=0
+	for containerId in $(docker ps -q); do
+		IFS='
+'
+		for line in $(docker port ${containerId}); do
+			count=$((count+1))
+			hostPortAndType=$(echo ${line} | awk '{ print $1 }')
+			guestIpAndPort=$(echo ${line} | awk '{ print $3 }')
+
+			hostPort=$(echo ${hostPortAndType} | awk -F'/' '{ print $1 }')
+			forwardType=$(echo ${hostPortAndType} | awk -F'/' '{ print $2 }')
+			guestPort=$(echo ${guestIpAndPort} | awk -F':' '{ print $2 }')
+
+			echo "docker-sync-port-${count},${forwardType},0.0.0.0,${guestPort},,${guestPort}"
+			VBoxManage controlvm $1 natpf1 "docker-sync-port-$count,${forwardType},0.0.0.0,${guestPort},,${guestPort}"
+		done
+	done
+}
