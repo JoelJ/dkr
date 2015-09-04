@@ -1,9 +1,14 @@
 #!/bin/bash -e
 
 function dkr-rm {
+	params="$@"
+	if [ "${params}" == "" ]; then
+		params="$(docker ps -aq)"
+	fi
+
 	if [ "$1" == "-f" ]; then
 		shift
-		for name in "$@"; do
+		for name in ${params}; do
 			containerId="$(docker inspect --format '{{.Id}}' ${name})"
 			containerName="$(docker inspect --format '{{.Name}}' ${name})"
 			docker stop "${containerId}" > /dev/null
@@ -12,14 +17,14 @@ function dkr-rm {
 		done
 	else
 		echo "Are you sure you want to stop and delete the following containers?"
-		for name in "$@"; do
+		for name in ${params}; do
 			containerId="$(docker inspect --format '{{.Id}}' ${name})"
 			containerName="$(docker inspect --format '{{.Name}}' ${name})"
 
 			echo "    ${containerName:1} (${containerId:0:12})"
 		done
 		read -p "[y/N] " yn
-		case $yn in
+		case ${yn} in
 			[Yy]* )
 				for name in "$@"; do
 					containerId="$(docker inspect --format '{{.Id}}' ${name})"
@@ -38,12 +43,4 @@ function dkr-rm {
 
 function dkr-rm-summary_ {
 	echo "Stops and deletes the listed containers"
-}
-
-function dkr-rma {
-	dkr-rm $(docker ps -aq)
-}
-
-function dkr-rma-summary_ {
-	echo "Stops and deletes all containers"
 }
