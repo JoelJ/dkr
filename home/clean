@@ -1,0 +1,14 @@
+#!/bin/bash -e
+
+function dkr-clean {
+	containers=$(docker ps -a | grep -E "Exited .*? ago" | awk '{ print $1 }')
+	if [ "$containers" != "" ]; then
+		docker rm ${containers}
+	else
+		err "Nothing to clean"
+	fi
+}
+
+function dkr-clean-summary_ {
+	echo "Deletes all stopped containers"
+}

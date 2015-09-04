@@ -1,0 +1,14 @@
+#!/bin/bash -e
+
+function dkr-cleani {
+	images=$(docker images -q -f dangling=true)
+	if [ "${images}" != "" ]; then
+		docker rmi ${images}
+	else
+		err "Nothing to clean"
+	fi
+}
+
+function dkr-cleani-summary_ {
+	echo "Cleans all dangling images"
+}
