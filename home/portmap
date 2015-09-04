@@ -55,7 +55,13 @@ function add_new_docker_ports {
 			forwardType=$(echo ${hostPortAndType} | awk -F'/' '{ print $2 }')
 			guestPort=$(echo ${guestIpAndPort} | awk -F':' '{ print $2 }')
 
-			err "forwarding port: ${guestPort} (${hostPort}) for ${containerName:1}"
+			if [ "${guestPort}" -lt 1024 ]; then
+				err "forwarding port: ${guestPort} (${hostPort}) for ${containerName:1} (Privileged port. May not work.)"
+			else
+				err "forwarding port: ${guestPort} (${hostPort}) for ${containerName:1}"
+			fi
+
+
 			VBoxManage controlvm $1 natpf1 "docker-sync-port-$count,${forwardType},0.0.0.0,${guestPort},,${guestPort}"
 		done
 	done
