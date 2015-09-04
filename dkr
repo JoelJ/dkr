@@ -1,11 +1,11 @@
 #!/bin/bash -e
 
-if [ "$DKR_HOME" == "" ]; then
-	DKR_HOME=~/.dkr
+if [ "${DKR_HOME}" == "" ]; then
+	export DKR_HOME=~/.dkr
 fi
 
 function debug {
-	if [ "$DKR_DEBUG" != "" ]; then
+	if [ "${DKR_DEBUG}" != "" ]; then
 		echo "$@" >&2
 	fi
 }
@@ -19,13 +19,13 @@ function usage {
 	err ""
 	err "In addition to standard docker commands, the following are available:"
 	for option in $(declare -F | grep -Eo "dkr-.*"); do
-		if [[ "$option" != *-summary_ ]]; then
+		if [[ "${option}" != *-summary_ ]]; then
 			set +e
 			2>/dev/null 1>/dev/null type "${option}-summary_"
 			exitCode=$?
 			set -e
 
-			if [ "$exitCode" == "0" ]; then
+			if [ "${exitCode}" == "0" ]; then
 				err "	${option:4} - $(eval ${option}-summary_)"
 			else
 				err "	${option:4}"
@@ -34,12 +34,12 @@ function usage {
 	done
 }
 
-for file in `ls $DKR_HOME/*`; do
-	if [[ -x $file ]]; then
-		debug "Sourcing $file"
-		source $file 
+for file in `ls ${DKR_HOME}/*`; do
+	if [[ -x ${file} ]]; then
+		debug "Sourcing ${file}"
+		source ${file}
 	else
-		debug "Skipping $file. Not Executable."
+		debug "Skipping ${file}. Not Executable."
 	fi
 done
 
@@ -56,7 +56,7 @@ set -e
 if [ "$exitCode" == "0" ]; then
 	command="dkr-$1"
 	shift
-	eval $command "$@"
+	eval ${command} "$@"
 else
 	docker "$@"
 fi

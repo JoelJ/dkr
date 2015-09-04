@@ -2,8 +2,8 @@
 
 function dkr-cleani {
 	images=$(docker images -q -f dangling=true)
-	if [ "$images" != "" ]; then
-		docker rmi $images
+	if [ "${images}" != "" ]; then
+		docker rmi ${images}
 	else
 		err "Nothing to clean"
 	fi
@@ -16,7 +16,7 @@ function dkr-cleani-summary_ {
 function dkr-clean {
 	containers=$(docker ps -a | grep -E "Exited .*? ago" | awk '{ print $1 }')
 	if [ "$containers" != "" ]; then
-		docker rm $containers
+		docker rm ${containers}
 	else
 		err "Nothing to clean"
 	fi
@@ -27,6 +27,7 @@ function dkr-clean-summary_ {
 }
 
 function dkr-rm {
+	# So that we have the same output as normal rm, just output the rm, and ignore the stop output.
 	docker stop "$@" > /dev/null
 	docker rm "$@"
 }
