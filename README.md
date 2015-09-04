@@ -4,9 +4,11 @@ Any command that doesn't exist in `dkr` automatically gets delegated to `docker`
 
 # Install
 
-git clone dkr
+```bash
+git clone git@github.com:JoelJ/dkr.git
 cd dkr
 ./install
+```
 
 # Usage
 
