@@ -1,12 +1,49 @@
 #!/bin/bash -e
 
 function dkr-rm {
-	# So that we have the same output as normal rm, just output the rm, and ignore the stop output.
-	docker stop "$@" > /dev/null
-	docker rm "$@"
+	if [ "$1" == "-f" ]; then
+		shift
+		for name in "$@"; do
+			containerId="$(docker inspect --format '{{.Id}}' ${name})"
+			containerName="$(docker inspect --format '{{.Name}}' ${name})"
+			docker stop "${containerId}" > /dev/null
+			docker rm "${containerId}" > /dev/null
+			echo "Removed: ${containerName:1} (${containerId:0:12})"
+		done
+	else
+		echo "Are you sure you want to stop and delete the following containers?"
+		for name in "$@"; do
+			containerId="$(docker inspect --format '{{.Id}}' ${name})"
+			containerName="$(docker inspect --format '{{.Name}}' ${name})"
+
+			echo "    ${containerName:1} (${containerId:0:12})"
+		done
+		read -p "[y/N] " yn
+		case $yn in
+			[Yy]* )
+				for name in "$@"; do
+					containerId="$(docker inspect --format '{{.Id}}' ${name})"
+					containerName="$(docker inspect --format '{{.Name}}' ${name})"
+					docker stop "${containerId}" > /dev/null
+					docker rm "${containerId}" > /dev/null
+					echo "Removed: ${containerName:1} (${containerId:0:12})"
+				done
+				;;
+			* )
+				echo "Nothing removed"
+				;;
+		esac
+	fi
 }
 
 function dkr-rm-summary_ {
 	echo "Stops and deletes the listed containers"
 }
 
+function dkr-rma {
+	dkr-rm $(docker ps -aq)
+}
+
+function dkr-rma-summary_ {
+	echo "Stops and deletes all containers"
+}
