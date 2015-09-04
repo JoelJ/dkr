@@ -44,7 +44,16 @@ function usage {
 	echo "See README for more information on extending dkr"
 }
 
-for file in `ls ${DKR_HOME}/*`; do
+for file in $(ls /usr/local/var/dkr/*); do
+	if [[ -x ${file} ]]; then
+		debug "Sourcing ${file}"
+		source ${file}
+	else
+		debug "Skipping ${file}. Not Executable."
+	fi
+done
+
+for file in $(ls ${DKR_HOME}/*); do
 	if [[ -x ${file} ]]; then
 		debug "Sourcing ${file}"
 		source ${file}

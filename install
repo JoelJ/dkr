@@ -1,4 +1,8 @@
 #!/bin/bash
 
-ln -s $PWD/home ~/.dkr
+ln -s $PWD/home /usr/local/var/dkr
 ln -s $PWD/dkr /usr/local/bin/dkr
+
+mkdir ~/.dkr
+
+cp README.md ~/.dkr
