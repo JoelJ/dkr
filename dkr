@@ -15,9 +15,16 @@ function err {
 }
 
 function usage {
-	err "Docker Wrapper"
-	err ""
-	err "In addition to standard docker commands, the following are available:"
+	echo "Dkr - Extendable docker cli wrapper"
+	echo ""
+	echo "Dkr exposes all the standard docker commands:"
+
+	docker --help | head -n-2 | tail -n+5
+
+	echo ""
+	echo "Extensions:"
+	echo ""
+
 	for option in $(declare -F | grep -Eo "dkr-.*"); do
 		if [[ "${option}" != *-summary_ ]]; then
 			set +e
@@ -26,12 +33,15 @@ function usage {
 			set -e
 
 			if [ "${exitCode}" == "0" ]; then
-				err "	${option:4} - $(eval ${option}-summary_)"
+				echo "    ${option:4} - $(eval ${option}-summary_)"
 			else
-				err "	${option:4}"
+				echo "    ${option:4}"
 			fi
 		fi
 	done
+
+	echo ""
+	echo "See README for more information on extending dkr"
 }
 
 for file in `ls ${DKR_HOME}/*`; do
