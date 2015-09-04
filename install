@@ -1,0 +1,4 @@
+#!/bin/bash
+
+ln -s $PWD/home ~/.dkr
+ln -s $PWD/dkr /usr/local/bin/dkr
