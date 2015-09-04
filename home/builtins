@@ -1,3 +1,4 @@
+#!/bin/bash -e
 
 function dkr-cleani {
 	images=$(docker images -q -f dangling=true)
