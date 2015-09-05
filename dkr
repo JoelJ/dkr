@@ -1,5 +1,6 @@
 #!/bin/bash -e
 
+export DKR_NAME="$(basename $0)"
 if [ "${DKR_HOME}" == "" ]; then
 	export DKR_HOME=~/.dkr
 fi
@@ -19,7 +20,7 @@ function usage {
 	echo ""
 	echo "Dkr exposes all the standard docker commands:"
 
-	docker --help | head -n-2 | tail -n+5
+	docker --help | sed "s:docker COMMAND --help:${DKR_NAME} COMMAND --help:g" | /usr/bin/tail -n +3 | /usr/bin/tail -n +5
 
 	echo ""
 	echo "Extensions:"
@@ -73,9 +74,30 @@ exitCode=$?
 set -e
 
 if [ "$exitCode" == "0" ]; then
-	command="dkr-$1"
-	shift
-	eval ${command} "$@"
+	if [[ "$@" =~ '--help' ]]; then
+		command="dkr-$1-help_"
+
+		set +e
+		2>/dev/null 1>/dev/null type "${command}"
+		exitCode=$?
+		set -e
+
+		if [ "${exitCode}" == "0" ]; then
+			eval "${command}"
+		else
+			echo "No help available for this command"
+			exit 2
+		fi
+	else
+		command="dkr-$1"
+		shift
+		eval "${command}" "$@"
+	fi
 else
-	docker "$@"
+	if [[ "$@" =~ '--help' ]]; then
+		docker "$@" | sed "s#Usage:\s*docker#Usage:  ${DKR_NAME}#g"
+	else
+		echo "nope"
+		docker "$@"
+	fi
 fi
