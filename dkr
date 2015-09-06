@@ -26,6 +26,28 @@ function find_command {
 	done
 }
 
+function is_debug {
+	debug "called is_debug"
+	for arg in "$@"; do
+		if [ "${arg}" == "--debug" ]; then
+			echo "true"
+			break
+		fi
+	done
+}
+
+function is_help {
+	debug "called is_help"
+	result="false"
+	for arg in "$@"; do
+		if [ "${arg}" == "--help" ]; then
+			result="true"
+			break
+		fi
+	done
+	echo ${result}
+}
+
 function usage {
 	echo "Dkr - Extendable docker cli wrapper"
 	echo ""
@@ -64,8 +86,11 @@ fi
 if [ "${DKR_DOCKER_COMMAND}" == "" ]; then
 	export DKR_DOCKER_COMMAND=docker
 fi
-export DKR_COMMAND="$(find_command "$@")"
 
+export DKR_DEBUG="$(is_debug "$@")"
+export is_help="$(is_help "$@")"
+
+export DKR_COMMAND="$(find_command "$@")"
 debug "found command: $DKR_COMMAND"
 
 if [ "${DKR_COMMAND}" == "" ]; then
@@ -81,7 +106,7 @@ set -e
 
 if [ "$exitCode" == "0" ]; then
 	debug "Using dkr command"
-	if [[ "$@" =~ '--help' ]]; then
+	if [ "${is_help}" == "true" ]; then
 		helpcommand="__dkr-${DKR_COMMAND}-help_"
 
 		set +e
@@ -102,7 +127,7 @@ if [ "$exitCode" == "0" ]; then
 	fi
 else
 	debug "Using vanilla docker"
-	if [[ "$@" =~ '--help' ]]; then
+	if [ "${is_help}" == "true" ]; then
 		"${DKR_DOCKER_COMMAND}" "$@" | sed "s#Usage:\s*docker#Usage:  ${DKR_NAME}#g"
 	else
 		"${DKR_DOCKER_COMMAND}" "$@"
