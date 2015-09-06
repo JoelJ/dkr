@@ -2,6 +2,8 @@
 
 function usage {
 	echo ""
+	echo "Installs or updates dkr"
+	echo ""
 	echo "$0 [OPTIONS]"
 	echo ""
 	column -t -s':' <<< "
@@ -55,6 +57,9 @@ while [ "$1" != "" ]; do
 			set -x
 			shift
 			;;
+		--no-pull)
+			NO_PULL=true
+			;;
 		--help)
 			usage
 			exit 0
@@ -84,6 +89,16 @@ if [ "${DKR_PROFILE_FILE}" == "" ]; then
 fi
 if [ "${DKR_DOCKER_COMMAND}" == "" ]; then
 	DKR_DOCKER_COMMAND="$(which docker)"
+fi
+
+if [ -d .git ]; then
+	if [ "${NO_PULL}" != "true" ]; then
+		echo "Attempting to update the repo."
+		git pull 1> /dev/null 2> /dev/null
+		if [ "$?" != "0" ]; then
+			echo "Unable to update repo. There are probably local changes that conflict."
+		fi
+	fi
 fi
 
 2>/dev/null 1>/dev/null grep '# ADDED BY DKR' "${DKR_PROFILE}"
