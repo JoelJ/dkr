@@ -10,3 +10,9 @@ function dkr-rn {
 function dkr-rn-summary_ {
 	echo "Runs like normal, and then immediately re-maps all the docker ports"
 }
+
+function dkr-rn-help_ {
+	docker run --help | sed "s#Usage:\s*docker run#Usage:  ${DKR_NAME} rn#g"
+	echo ""
+	dkr-rn-summary_
+}

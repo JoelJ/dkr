@@ -44,3 +44,17 @@ function dkr-rm {
 function dkr-rm-summary_ {
 	echo "Stops and deletes the listed containers"
 }
+
+
+function dkr-rm-help_ {
+	echo ""
+	echo "Usage:  ${DKR_NAME} rm [CONTAINER ID OR NAME, ...]"
+	echo ""
+	dkr-rm-summary_
+	echo ""
+	echo "If no parameters are specified, you will be prompted if you want to stop and delete all containers."
+	echo "If parameters are specified, then you will be prompted if you want to stop and delete all of them."
+	echo ""
+	echo "  -f=false           Force stop and delete. Do not prompt for deletion."
+	echo "  --help=false       Print usage"
+}

@@ -12,3 +12,12 @@ function dkr-cleani {
 function dkr-cleani-summary_ {
 	echo "Cleans all dangling images"
 }
+
+function dkr-cleani-help_ {
+	echo ""
+	echo "Usage:  ${DKR_NAME} cleani"
+	echo ""
+	dkr-cleani-summary_
+	echo ""
+	echo "  --help=false       Print usage"
+}

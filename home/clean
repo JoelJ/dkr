@@ -12,3 +12,12 @@ function dkr-clean {
 function dkr-clean-summary_ {
 	echo "Deletes all stopped containers"
 }
+
+function dkr-clean-help_ {
+	echo ""
+	echo "Usage:  ${DKR_NAME} clean"
+	echo ""
+	dkr-clean-summary_
+	echo ""
+	echo "  --help=false       Print usage"
+}

@@ -67,3 +67,12 @@ function add_new_docker_ports {
 	done
 	set -e
 }
+
+function dkr-portmap-help_ {
+	echo ""
+	echo "Usage:  ${DKR_NAME} portmap"
+	echo ""
+	dkr-portmap-summary_
+	echo ""
+	echo "  --help=false       Print usage"
+}
