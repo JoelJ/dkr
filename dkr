@@ -42,9 +42,9 @@ function usage {
 			set -e
 
 			if [ "${exitCode}" == "0" ]; then
-				echo "    ${option:4} - $(eval ${option}-summary_)"
+				echo "    ${option:6} - $(eval ${option}-summary_)"
 			else
-				echo "    ${option:4}"
+				echo "    ${option:6}"
 			fi
 		fi
 	done
