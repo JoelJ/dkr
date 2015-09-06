@@ -1,7 +1,12 @@
 #!/bin/bash -e
 
 function dkr-cleani {
-	images=$(docker images -q -f dangling=true)
+	if [[ "$@" =~ '--all' ]]; then
+		images=$(docker images -q)
+	else
+		images=$(docker images -q -f dangling=true)
+	fi
+
 	if [ "${images}" != "" ]; then
 		docker rmi ${images}
 	else
@@ -19,5 +24,6 @@ function dkr-cleani-help_ {
 	echo ""
 	dkr-cleani-summary_
 	echo ""
+	echo "  --all=false        Deletes all images"
 	echo "  --help=false       Print usage"
 }
