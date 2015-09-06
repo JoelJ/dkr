@@ -1,6 +1,6 @@
 #!/bin/bash
 
-function dkr-clean {
+function __dkr-clean {
 	if [[ "$@" =~ '--all' ]]; then
 		containers=$("${DKR_DOCKER_COMMAND}" ps -a)
 		2>/dev/null 1>/dev/null "${DKR_DOCKER_COMMAND}" stop ${containers}
@@ -16,20 +16,20 @@ function dkr-clean {
 	fi
 }
 
-function dkr-clean-summary_ {
+function __dkr-clean-summary_ {
 	echo "Deletes all stopped containers"
 }
 
-function dkr-clean-help_ {
+function __dkr-clean-help_ {
 	echo ""
 	echo "Usage:  ${DKR_NAME} clean"
 	echo ""
-	dkr-clean-summary_
+	__dkr-clean-summary_
 	echo ""
 	echo "  --all=false        Stops and removes all contain"
 	echo "  --help=false       Print usage"
 }
 
-export -f dkr-clean
-export -f dkr-clean-summary_
-export -f dkr-clean-help_
+export -f __dkr-clean
+export -f __dkr-clean-summary_
+export -f __dkr-clean-help_

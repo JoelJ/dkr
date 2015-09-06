@@ -34,7 +34,7 @@ function usage {
 	echo "Extensions:"
 	echo ""
 
-	for option in $(declare -F | grep -Eo "dkr-.*"); do
+	for option in $(declare -F | grep -Eo "__dkr-.*"); do
 		if [[ "${option}" != *-summary_ ]] && [[ "${option}" != *-help_ ]]; then
 			set +e
 			2>/dev/null 1>/dev/null type "${option}-summary_"
@@ -58,16 +58,16 @@ if [ "${DKR_COMMAND}" == "" ]; then
 	exit 1
 fi
 
-debug "Checking for: dkr-${DKR_COMMAND}"
+debug "Checking for: __dkr-${DKR_COMMAND}"
 set +e
-2>/dev/null 1>/dev/null type "dkr-${DKR_COMMAND}"
+2>/dev/null 1>/dev/null type "__dkr-${DKR_COMMAND}"
 exitCode=$?
 set -e
 
 if [ "$exitCode" == "0" ]; then
 	debug "Using dkr command"
 	if [[ "$@" =~ '--help' ]]; then
-		helpcommand="dkr-${DKR_COMMAND}-help_"
+		helpcommand="__dkr-${DKR_COMMAND}-help_"
 
 		set +e
 		2>/dev/null 1>/dev/null type "${helpcommand}"
@@ -81,7 +81,7 @@ if [ "$exitCode" == "0" ]; then
 			exit 2
 		fi
 	else
-		command="dkr-${DKR_COMMAND}"
+		command="__dkr-${DKR_COMMAND}"
 		shift
 		eval "${command}" "$@"
 	fi

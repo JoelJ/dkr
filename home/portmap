@@ -1,10 +1,10 @@
 #!/bin/bash
 
-function dkr-portmap-summary_ {
+function __dkr-portmap-summary_ {
 	echo "Maps the currently running containers' ports to the host machine. (Requires a VirtualBox DockerMachine)"
 }
 
-function dkr-portmap {
+function __dkr-portmap {
 	machine_name="$(docker-machine ls | grep -E '\*' | awk '{ print $1 }')"
 
 	if [ "${machine_name}" == "" ]; then
@@ -68,15 +68,15 @@ function add_new_docker_ports {
 	set -e
 }
 
-function dkr-portmap-help_ {
+function __dkr-portmap-help_ {
 	echo ""
 	echo "Usage:  ${DKR_NAME} portmap"
 	echo ""
-	dkr-portmap-summary_
+	__dkr-portmap-summary_
 	echo ""
 	echo "  --help=false       Print usage"
 }
 
-export -f dkr-portmap
-export -f dkr-portmap-summary_
-export -f dkr-portmap-help_
+export -f __dkr-portmap
+export -f __dkr-portmap-summary_
+export -f __dkr-portmap-help_

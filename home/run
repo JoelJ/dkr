@@ -1,6 +1,6 @@
 #!/bin/bash
 
-function dkr-rn {
+function __dkr-rn {
 	set -m
 	"${DKR_DOCKER_COMMAND}" run "$@" &
 	2>/dev/null 1>/dev/null dkr-portmap
@@ -12,16 +12,16 @@ function dkr-rn {
 	2>/dev/null 1>/dev/null fg
 }
 
-function dkr-rn-summary_ {
+function __dkr-rn-summary_ {
 	echo "Runs like normal, and then immediately re-maps all the docker ports"
 }
 
-function dkr-rn-help_ {
+function __dkr-rn-help_ {
 	"${DKR_DOCKER_COMMAND}" run --help | sed "s#Usage:\s*docker run#Usage:  ${DKR_NAME} rn#g"
 	echo ""
-	dkr-rn-summary_
+	__dkr-rn-summary_
 }
 
-export -f dkr-rn
-export -f dkr-rn-summary_
-export -f dkr-rn-help_
+export -f __dkr-rn
+export -f __dkr-rn-summary_
+export -f __dkr-rn-help_

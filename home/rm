@@ -1,6 +1,6 @@
 #!/bin/bash -e
 
-function dkr-rm {
+function __dkr-rm {
 	params="$@"
 	if [ "${params}" == "" ]; then
 		params="$("${DKR_DOCKER_COMMAND}" ps -aq)"
@@ -41,16 +41,16 @@ function dkr-rm {
 	fi
 }
 
-function dkr-rm-summary_ {
+function __dkr-rm-summary_ {
 	echo "Stops and deletes the listed containers"
 }
 
 
-function dkr-rm-help_ {
+function __dkr-rm-help_ {
 	echo ""
 	echo "Usage:  ${DKR_NAME} rm [CONTAINER ID OR NAME, ...]"
 	echo ""
-	dkr-rm-summary_
+	__dkr-rm-summary_
 	echo ""
 	echo "If no parameters are specified, you will be prompted if you want to stop and delete all containers."
 	echo "If parameters are specified, then you will be prompted if you want to stop and delete all of them."
@@ -59,6 +59,6 @@ function dkr-rm-help_ {
 	echo "  --help=false       Print usage"
 }
 
-export -f dkr-rm
-export -f dkr-rm-summary_
-export -f dkr-rm-help_
+export -f __dkr-rm
+export -f __dkr-rm-summary_
+export -f __dkr-rm-help_

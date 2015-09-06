@@ -1,6 +1,6 @@
 #!/bin/bash
 
-function dkr-cleani {
+function __dkr-cleani {
 	if [[ "$@" =~ '--all' ]]; then
 		images=$("${DKR_DOCKER_COMMAND}" images -q)
 	else
@@ -14,20 +14,20 @@ function dkr-cleani {
 	fi
 }
 
-function dkr-cleani-summary_ {
+function __dkr-cleani-summary_ {
 	echo "Cleans all dangling images"
 }
 
-function dkr-cleani-help_ {
+function __dkr-cleani-help_ {
 	echo ""
 	echo "Usage:  ${DKR_NAME} cleani"
 	echo ""
-	dkr-cleani-summary_
+	__dkr-cleani-summary_
 	echo ""
 	echo "  --all=false        Deletes all images"
 	echo "  --help=false       Print usage"
 }
 
-export -f dkr-cleani
-export -f dkr-cleani-summary_
-export -f dkr-cleani-help_
+export -f __dkr-cleani
+export -f __dkr-cleani-summary_
+export -f __dkr-cleani-help_
