@@ -2,14 +2,22 @@
 
 function __dkr-rn {
 	set -m
-	"${DKR_DOCKER_COMMAND}" run "$@" &
-	2>/dev/null 1>/dev/null dkr-portmap
 
+	is_running_detached=$(__is_running_detached "$@")
+	if [ "${is_running_detached}" == "true" ]; then
+		"${DKR_DOCKER_COMMAND}" run "$@"
+	else
+		"${DKR_DOCKER_COMMAND}" run "$@" &
+	fi
+
+	__dkr-portmap
 	if [ "$?" != "0" ]; then
 		err "Could not map ports\!"
 	fi
 
-	2>/dev/null 1>/dev/null fg
+	if [ "${is_running_detached}" != "true" ]; then
+		2>/dev/null 1>/dev/null fg
+	fi
 }
 
 function __dkr-rn-summary_ {
@@ -20,4 +28,15 @@ function __dkr-rn-help_ {
 	"${DKR_DOCKER_COMMAND}" run --help | sed "s#Usage:\s*docker run#Usage:  ${DKR_NAME} rn#g"
 	echo ""
 	__dkr-rn-summary_
+}
+
+function __is_running_detached {
+	result=false
+	for arg in "$@"; do
+		if [ "${arg}" == "-d" ] || [ "${arg}" == "--detach" ] || [ "${arg}" == "--detach=true" ]; then
+		  result=true
+		  break;
+		fi
+	done
+	echo "${result}"
 }
