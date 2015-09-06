@@ -13,6 +13,7 @@ function usage {
 	--dkr-profile-file=~/.dkrprofile : The location the dkr profile should be installed to.
 	: This file ensures that all the environment variables and functions required are available in the bash session.
 	--docker-command=$(which docker) : The location of the docker bin.
+	--debug : Prints debug information
 	--help : Prints this help file.
 	"
 }
@@ -31,20 +32,36 @@ while [ "$1" != "" ]; do
 			shift
 			;;
 		--profile)
-			DKR_PROFILE="$2"
+			if [ "$DKR_PROFILE" != "$2" ]; then
+				echo "WARNING: Cannot use flag '--profile' if it's been previously set. Ignoring."
+			else
+				DKR_PROFILE="$2"
+			fi
 			shift
 			;;
 		--dkr-profile-file)
-			DKR_PROFILE_FILE="$2"
+			if [ "$DKR_PROFILE" != "$2" ]; then
+				echo "WARNING: Cannot use flag '--dkr-profile-file' if it's been previously set. Ignoring."
+			else
+				DKR_PROFILE_FILE="$2"
+			fi
 			shift
 			;;
 		--docker-command)
 			DKR_DOCKER_COMMAND="$2"
 			shift
 			;;
+		--debug)
+			set -x
+			shift
+			;;
 		--help)
 			usage
 			exit 0
+			;;
+		*)
+			echo "Unknown flag: '$1'"
+			exit 1
 			;;
 	esac
 	shift
@@ -69,15 +86,6 @@ if [ "${DKR_DOCKER_COMMAND}" == "" ]; then
 	DKR_DOCKER_COMMAND="$(which docker)"
 fi
 
-echo $DKR_BIN_DIR_PATH
-echo $DKR_BIN_PATH
-echo $DKR_HOME
-echo $DKR_PROFILE
-echo $DKR_PROFILE_FILE
-echo $DKR_DOCKER_COMMAND
-
-exit 0
-
 2>/dev/null 1>/dev/null grep '# ADDED BY DKR' "${DKR_PROFILE}"
 if [ "$?" == "0" ]; then
 	echo "Detected dkr was previously installed."
@@ -100,6 +108,10 @@ cp dkr "${DKR_BIN_PATH}"
 cp home/* "${DKR_BIN_DIR_PATH}"
 
 if [ "${installed}" != "true" ]; then
+	if [ ! -f "${DKR_PROFILE}" ]; then
+		echo "WARNING: ${DKR_PROFILE} doesn't exist. It will be created."
+	fi
+
 	echo "# ADDED BY DKR" >> ${DKR_PROFILE}
 	echo "source \"${DKR_PROFILE_FILE}\"" >> ${DKR_PROFILE}
 fi
@@ -114,7 +126,7 @@ echo "export DKR_DOCKER_COMMAND=\"${DKR_DOCKER_COMMAND}\"" >> "${DKR_PROFILE_FIL
 
 cat profileFile >> "${DKR_PROFILE_FILE}"
 
-echo "Installed dkr to \"${DKR_BIN_PATH}\". You may need to restart your bash session or run:"
+echo "Successfully installed dkr to \"${DKR_BIN_PATH}\". You may need to restart your bash session or run:"
 echo ""
 echo "source \"${DKR_PROFILE_FILE}\""
 echo ""
