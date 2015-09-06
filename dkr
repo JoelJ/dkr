@@ -24,7 +24,7 @@ function usage {
 	echo ""
 	echo "Dkr exposes all the standard docker commands:"
 
-	"${DKR_COMMAND}" --help | sed "s:docker COMMAND --help:${DKR_NAME} COMMAND --help:g" | /usr/bin/tail -n +3 | /usr/bin/tail -n +5
+	"${DKR_COMMAND}" --help | sed "s:docker COMMAND --help:${DKR_NAME} COMMAND --help:g" | tail -n +3 | tail -n +5
 
 	echo ""
 	echo "Extensions:"
