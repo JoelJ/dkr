@@ -1,7 +1,7 @@
-#!/bin/bash -xe
+#!/bin/bash
 
 DKR_BIN_DIR_PATH=/usr/local/var/dkr
-DKR_BIN_PATH=/usr/local/bin
+DKR_BIN_PATH=/usr/local/bin/dkr
 DKR_HOME=~/.dkr
 DKR_PROFILE=~/.profile
 DKR_PROFILE_FILE=~/.dkrprofile
@@ -23,11 +23,13 @@ if [ ! -d "${DKR_HOME}" ]; then
 	mkdir -p "${DKR_HOME}"
 fi
 
+mkdir -p "${DKR_BIN_DIR_PATH}"
+
 cp dkr "${DKR_BIN_PATH}"
-cp home "${DKR_BIN_DIR_PATH}"
+cp home/* "${DKR_BIN_DIR_PATH}"
 
 if [ "${installed}" != "true" ]; then
-	echo "source \"${DKR_PROFILE_FILE}" >> ${DKR_PROFILE}
+	echo "source \"${DKR_PROFILE_FILE}\"" >> ${DKR_PROFILE}
 fi
 
 # (Re)generate the DKR_PROFILE_FILE which should be sourced into the bash profile

@@ -58,3 +58,7 @@ function dkr-rm-help_ {
 	echo "  -f=false           Force stop and delete. Do not prompt for deletion."
 	echo "  --help=false       Print usage"
 }
+
+export -f dkr-rm
+export -f dkr-rm-summary_
+export -f dkr-rm-help_

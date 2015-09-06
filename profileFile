@@ -6,6 +6,7 @@ export PATH="${DKR_HOME}":"${DKR_BIN_DIR_PATH}":"${PATH}"
 if [ "$?" == "0" ]; then
 	for file in $(ls "${DKR_BIN_DIR_PATH}"/*); do
 		if [[ ! -x ${file} ]]; then
+			echo "sourcing ${file}"
 			source ${file}
 		fi
 	done
@@ -15,6 +16,7 @@ fi
 if [ "$?" == "0" ]; then
 	for file in $(ls "${DKR_HOME}"/*); do
 		if [[ ! -x ${file} ]]; then
+			echo "sourcing ${file}"
 			source ${file}
 		fi
 	done

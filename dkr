@@ -16,10 +16,12 @@ function debug {
 		echo "$@" >&2
 	fi
 }
+export -f debug
 
 function err {
 	echo "$@" >&2
 }
+export -f err
 
 function usage {
 	echo "Dkr - Extendable docker cli wrapper"
@@ -56,12 +58,14 @@ if [ "${DKR_COMMAND}" == "" ]; then
 	exit 1
 fi
 
+debug "Checking for: dkr-${DKR_COMMAND}"
 set +e
 2>/dev/null 1>/dev/null type "dkr-${DKR_COMMAND}"
 exitCode=$?
 set -e
 
 if [ "$exitCode" == "0" ]; then
+	debug "Using dkr command"
 	if [[ "$@" =~ '--help' ]]; then
 		helpcommand="dkr-${DKR_COMMAND}-help_"
 
@@ -73,7 +77,7 @@ if [ "$exitCode" == "0" ]; then
 		if [ "${exitCode}" == "0" ]; then
 			eval "${helpcommand}"
 		else
-			echo "No help available for $DKR_NAME ${DKR_COMMAND}"
+			echo "No help available for ${DKR_NAME} ${DKR_COMMAND}"
 			exit 2
 		fi
 	else
@@ -82,6 +86,7 @@ if [ "$exitCode" == "0" ]; then
 		eval "${command}" "$@"
 	fi
 else
+	debug "Using vanilla docker"
 	if [[ "$@" =~ '--help' ]]; then
 		"${DKR_DOCKER_COMMAND}" "$@" | sed "s#Usage:\s*docker#Usage:  ${DKR_NAME}#g"
 	else

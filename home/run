@@ -4,6 +4,11 @@ function dkr-rn {
 	set -m
 	"${DKR_DOCKER_COMMAND}" run "$@" &
 	2>/dev/null 1>/dev/null dkr-portmap
+
+	if [ "$?" != "0" ]; then
+		err "Could not map ports\!"
+	fi
+
 	2>/dev/null 1>/dev/null fg
 }
 
@@ -16,3 +21,7 @@ function dkr-rn-help_ {
 	echo ""
 	dkr-rn-summary_
 }
+
+export -f dkr-rn
+export -f dkr-rn-summary_
+export -f dkr-rn-help_
