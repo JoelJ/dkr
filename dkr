@@ -31,7 +31,7 @@ function usage {
 	echo ""
 
 	for option in $(declare -F | grep -Eo "dkr-.*"); do
-		if [[ "${option}" != *-summary_ ]]; then
+		if [[ "${option}" != *-summary_ ]] && [[ "${option}" != *-help_ ]]; then
 			set +e
 			2>/dev/null 1>/dev/null type "${option}-summary_"
 			exitCode=$?
