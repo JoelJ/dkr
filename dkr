@@ -1,19 +1,8 @@
 #!/bin/bash -e
 
-export DKR_NAME="$(basename $0)"
-if [ "${DKR_HOME}" == "" ]; then
-	export DKR_HOME=~/.dkr
-fi
-
-if [ "${DKR_DOCKER_COMMAND}" == "" ]; then
-	export DKR_DOCKER_COMMAND=docker
-fi
-
-export DKR_COMMAND="$1" #TODO: it's possible that the command isn't the first arg
-
 function debug {
 	if [ "${DKR_DEBUG}" != "" ]; then
-		echo "$@" >&2
+		echo "DEBUG: $@" >&2
 	fi
 }
 export -f debug
@@ -22,6 +11,20 @@ function err {
 	echo "$@" >&2
 }
 export -f err
+
+function find_command {
+	debug "called find_command"
+	for arg in "$@"; do
+		if [[ "${arg}" == -* ]]; then
+			debug "not using ${arg}"
+			continue
+		else
+			debug "using ${arg}"
+			echo "${arg}"
+			break
+		fi
+	done
+}
 
 function usage {
 	echo "Dkr - Extendable docker cli wrapper"
@@ -52,6 +55,18 @@ function usage {
 	echo ""
 	echo "See README for more information on extending dkr"
 }
+
+export DKR_NAME="$(basename $0)"
+if [ "${DKR_HOME}" == "" ]; then
+	export DKR_HOME=~/.dkr
+fi
+
+if [ "${DKR_DOCKER_COMMAND}" == "" ]; then
+	export DKR_DOCKER_COMMAND=docker
+fi
+export DKR_COMMAND="$(find_command "$@")"
+
+debug "found command: $DKR_COMMAND"
 
 if [ "${DKR_COMMAND}" == "" ]; then
 	usage
