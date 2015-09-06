@@ -2,8 +2,7 @@
 
 export PATH="${DKR_HOME}":"${DKR_BIN_DIR_PATH}":"${PATH}"
 
-2>/dev/null 1>/dev/null ls "${DKR_BIN_DIR_PATH}"/*
-if [ "$?" == "0" ]; then
+if find "${DKR_BIN_DIR_PATH}" -mindepth 1 -print -quit | grep -q .; then
 	for file in $(ls "${DKR_BIN_DIR_PATH}"/*); do
 		if [[ ! -x ${file} ]]; then
 			source ${file}
@@ -11,8 +10,7 @@ if [ "$?" == "0" ]; then
 	done
 fi
 
-2>/dev/null 1>/dev/null ls "${DKR_BIN_DIR_PATH}"/*
-if [ "$?" == "0" ]; then
+if find "${DKR_HOME}" -mindepth 1 -print -quit | grep -q .; then
 	for file in $(ls "${DKR_HOME}"/*); do
 		if [[ ! -x ${file} ]]; then
 			source ${file}
