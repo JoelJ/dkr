@@ -1,11 +1,82 @@
 #!/bin/bash
 
-DKR_BIN_DIR_PATH=/usr/local/var/dkr
-DKR_BIN_PATH=/usr/local/bin/dkr
-DKR_HOME=~/.dkr
-DKR_PROFILE=~/.profile
-DKR_PROFILE_FILE=~/.dkrprofile
-DKR_DOCKER_COMMAND="$(which docker)"
+function usage {
+	echo ""
+	echo "$0 [OPTIONS]"
+	echo ""
+	column -t -s':' <<< "
+	--bin-file=/usr/local/var/dkr : The location the dkr bin file should be installed.
+	--bin-path=/usr/local/bin/dkr : The location the built-in extention files should be installed to.
+	--home=~/.dkr : The location user extention files should be put.
+	--profile=~/.profile : The location of the user's bash profile file.
+	: A simple 'source' line for the dkr profile file will be added to this file the first time the installer is run.
+	--dkr-profile-file=~/.dkrprofile : The location the dkr profile should be installed to.
+	: This file ensures that all the environment variables and functions required are available in the bash session.
+	--docker-command=$(which docker) : The location of the docker bin.
+	--help : Prints this help file.
+	"
+}
+while [ "$1" != "" ]; do
+	case "$1" in
+		--bin-file)
+			DKR_BIN_DIR_PATH="$2"
+			shift
+			;;
+		--bin-path)
+			DKR_BIN_PATH="$2"
+			shift
+			;;
+		--home)
+			DKR_HOME="$2"
+			shift
+			;;
+		--profile)
+			DKR_PROFILE="$2"
+			shift
+			;;
+		--dkr-profile-file)
+			DKR_PROFILE_FILE="$2"
+			shift
+			;;
+		--docker-command)
+			DKR_DOCKER_COMMAND="$2"
+			shift
+			;;
+		--help)
+			usage
+			exit 0
+			;;
+	esac
+	shift
+done
+
+if [ "${DKR_BIN_DIR_PATH}" == "" ]; then
+	DKR_BIN_DIR_PATH=/usr/local/var/dkr
+fi
+if [ "${DKR_BIN_PATH}" == "" ]; then
+	DKR_BIN_PATH=/usr/local/bin/dkr
+fi
+if [ "${DKR_HOME}" == "" ]; then
+	DKR_HOME=~/.dkr
+fi
+if [ "${DKR_PROFILE}" == "" ]; then
+	DKR_PROFILE=~/.profile
+fi
+if [ "${DKR_PROFILE_FILE}" == "" ]; then
+	DKR_PROFILE_FILE=~/.dkrprofile
+fi
+if [ "${DKR_DOCKER_COMMAND}" == "" ]; then
+	DKR_DOCKER_COMMAND="$(which docker)"
+fi
+
+echo $DKR_BIN_DIR_PATH
+echo $DKR_BIN_PATH
+echo $DKR_HOME
+echo $DKR_PROFILE
+echo $DKR_PROFILE_FILE
+echo $DKR_DOCKER_COMMAND
+
+exit 0
 
 2>/dev/null 1>/dev/null grep '# ADDED BY DKR' "${DKR_PROFILE}"
 if [ "$?" == "0" ]; then
