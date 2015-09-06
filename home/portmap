@@ -46,7 +46,7 @@ function add_new_docker_ports {
 
 		IFS='
 '
-		for line in $("${DKR_COMMAND}" port ${containerId}); do
+		for line in $("${DKR_DOCKER_COMMAND}" port ${containerId}); do
 			count=$((count+1))
 			hostPortAndType=$(echo ${line} | awk '{ print $1 }')
 			guestIpAndPort=$(echo ${line} | awk '{ print $3 }')

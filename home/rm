@@ -3,23 +3,23 @@
 function dkr-rm {
 	params="$@"
 	if [ "${params}" == "" ]; then
-		params="$("${DKR_COMMAND}" ps -aq)"
+		params="$("${DKR_DOCKER_COMMAND}" ps -aq)"
 	fi
 
 	if [ "$1" == "-f" ]; then
 		shift
 		for name in ${params}; do
-			containerId="$(${DKR_COMMAND} inspect --format '{{.Id}}' ${name})"
-			containerName="$(${DKR_COMMAND} inspect --format '{{.Name}}' ${name})"
-			"${DKR_COMMAND}" stop "${containerId}" > /dev/null
-			"${DKR_COMMAND}" rm "${containerId}" > /dev/null
+			containerId="$(${DKR_DOCKER_COMMAND} inspect --format '{{.Id}}' ${name})"
+			containerName="$(${DKR_DOCKER_COMMAND} inspect --format '{{.Name}}' ${name})"
+			"${DKR_DOCKER_COMMAND}" stop "${containerId}" > /dev/null
+			"${DKR_DOCKER_COMMAND}" rm "${containerId}" > /dev/null
 			echo "Removed: ${containerName:1} (${containerId:0:12})"
 		done
 	else
 		echo "Are you sure you want to stop and delete the following containers?"
 		for name in ${params}; do
-			containerId="$(${DKR_COMMAND} inspect --format '{{.Id}}' ${name})"
-			containerName="$(${DKR_COMMAND} inspect --format '{{.Name}}' ${name})"
+			containerId="$(${DKR_DOCKER_COMMAND} inspect --format '{{.Id}}' ${name})"
+			containerName="$(${DKR_DOCKER_COMMAND} inspect --format '{{.Name}}' ${name})"
 
 			echo "    ${containerName:1} (${containerId:0:12})"
 		done
@@ -27,10 +27,10 @@ function dkr-rm {
 		case ${yn} in
 			[Yy]* )
 				for name in ${params}; do
-					containerId="$(${DKR_COMMAND} inspect --format '{{.Id}}' ${name})"
-					containerName="$(${DKR_COMMAND} inspect --format '{{.Name}}' ${name})"
-					"${DKR_COMMAND}" stop "${containerId}" > /dev/null
-					"${DKR_COMMAND}" rm "${containerId}" > /dev/null
+					containerId="$(${DKR_DOCKER_COMMAND} inspect --format '{{.Id}}' ${name})"
+					containerName="$(${DKR_DOCKER_COMMAND} inspect --format '{{.Name}}' ${name})"
+					"${DKR_DOCKER_COMMAND}" stop "${containerId}" > /dev/null
+					"${DKR_DOCKER_COMMAND}" rm "${containerId}" > /dev/null
 					echo "Removed: ${containerName:1} (${containerId:0:12})"
 				done
 				;;

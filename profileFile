@@ -1,0 +1,21 @@
+#!/bin/bash
+
+export PATH="${DKR_HOME}":"${DKR_BIN_DIR_PATH}":"${PATH}"
+
+2>/dev/null 1>/dev/null ls "${DKR_BIN_DIR_PATH}"/*
+if [ "$?" == "0" ]; then
+	for file in $(ls "${DKR_BIN_DIR_PATH}"/*); do
+		if [[ ! -x ${file} ]]; then
+			source ${file}
+		fi
+	done
+fi
+
+2>/dev/null 1>/dev/null ls "${DKR_BIN_DIR_PATH}"/*
+if [ "$?" == "0" ]; then
+	for file in $(ls "${DKR_HOME}"/*); do
+		if [[ ! -x ${file} ]]; then
+			source ${file}
+		fi
+	done
+fi

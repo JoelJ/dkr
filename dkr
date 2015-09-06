@@ -5,9 +5,11 @@ if [ "${DKR_HOME}" == "" ]; then
 	export DKR_HOME=~/.dkr
 fi
 
-if [ "${DKR_COMMAND}" == "" ]; then
-	export DKR_COMMAND=docker
+if [ "${DKR_DOCKER_COMMAND}" == "" ]; then
+	export DKR_DOCKER_COMMAND=docker
 fi
+
+export DKR_COMMAND="$1" #TODO: it's possible that the command isn't the first arg
 
 function debug {
 	if [ "${DKR_DEBUG}" != "" ]; then
@@ -24,7 +26,7 @@ function usage {
 	echo ""
 	echo "Dkr exposes all the standard docker commands:"
 
-	"${DKR_COMMAND}" --help | sed "s:docker COMMAND --help:${DKR_NAME} COMMAND --help:g" | tail -n +3 | tail -n +5
+	"${DKR_DOCKER_COMMAND}" --help | sed "s:docker COMMAND --help:${DKR_NAME} COMMAND --help:g" | tail -n +3 | tail -n +5
 
 	echo ""
 	echo "Extensions:"
@@ -49,58 +51,40 @@ function usage {
 	echo "See README for more information on extending dkr"
 }
 
-for file in $(ls /usr/local/var/dkr/*); do
-	if [[ -x ${file} ]]; then
-		debug "Sourcing ${file}"
-		source ${file}
-	else
-		debug "Skipping ${file}. Not Executable."
-	fi
-done
-
-for file in $(ls ${DKR_HOME}/*); do
-	if [[ -x ${file} ]]; then
-		debug "Sourcing ${file}"
-		source ${file}
-	else
-		debug "Skipping ${file}. Not Executable."
-	fi
-done
-
-if [ "$1" == "" ]; then
+if [ "${DKR_COMMAND}" == "" ]; then
 	usage
 	exit 1
 fi
 
 set +e
-2>/dev/null 1>/dev/null type "dkr-$1"
+2>/dev/null 1>/dev/null type "dkr-${DKR_COMMAND}"
 exitCode=$?
 set -e
 
 if [ "$exitCode" == "0" ]; then
 	if [[ "$@" =~ '--help' ]]; then
-		command="dkr-$1-help_"
+		helpcommand="dkr-${DKR_COMMAND}-help_"
 
 		set +e
-		2>/dev/null 1>/dev/null type "${command}"
+		2>/dev/null 1>/dev/null type "${helpcommand}"
 		exitCode=$?
 		set -e
 
 		if [ "${exitCode}" == "0" ]; then
-			eval "${command}"
+			eval "${helpcommand}"
 		else
-			echo "No help available for this command"
+			echo "No help available for $DKR_NAME ${DKR_COMMAND}"
 			exit 2
 		fi
 	else
-		command="dkr-$1"
+		command="dkr-${DKR_COMMAND}"
 		shift
 		eval "${command}" "$@"
 	fi
 else
 	if [[ "$@" =~ '--help' ]]; then
-		"${DKR_COMMAND}" "$@" | sed "s#Usage:\s*docker#Usage:  ${DKR_NAME}#g"
+		"${DKR_DOCKER_COMMAND}" "$@" | sed "s#Usage:\s*docker#Usage:  ${DKR_NAME}#g"
 	else
-		"${DKR_COMMAND}" "$@"
+		"${DKR_DOCKER_COMMAND}" "$@"
 	fi
 fi
