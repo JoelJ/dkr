@@ -100,6 +100,30 @@ if [ "${DKR_COMMAND}" == "" ]; then
 	exit 1
 fi
 
+#
+# Source the built ins. Even though they are sourced in the bash profile,
+# functions aren't exported, and each shell does it differently.
+# So this is the easiest way to handle that case.
+#
+if find "${DKR_BIN_DIR_PATH}" -mindepth 1 -print -quit | grep -q .; then
+	for file in $(ls "${DKR_BIN_DIR_PATH}"/*); do
+		if [[ ! -x ${file} ]]; then
+			source ${file}
+		fi
+	done
+fi
+
+#
+# Source the user defined functions
+#
+if find "${DKR_HOME}" -mindepth 1 -print -quit | grep -q .; then
+	for file in $(ls "${DKR_HOME}"/*); do
+		if [[ ! -x ${file} ]]; then
+			source ${file}
+		fi
+	done
+fi
+
 debug "Checking for: __dkr-${DKR_COMMAND}"
 set +e
 2>/dev/null 1>/dev/null type "__dkr-${DKR_COMMAND}"

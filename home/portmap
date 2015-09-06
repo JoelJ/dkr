@@ -76,7 +76,3 @@ function __dkr-portmap-help_ {
 	echo ""
 	echo "  --help=false       Print usage"
 }
-
-export -f __dkr-portmap
-export -f __dkr-portmap-summary_
-export -f __dkr-portmap-help_

@@ -27,7 +27,3 @@ function __dkr-cleani-help_ {
 	echo "  --all=false        Deletes all images"
 	echo "  --help=false       Print usage"
 }
-
-export -f __dkr-cleani
-export -f __dkr-cleani-summary_
-export -f __dkr-cleani-help_

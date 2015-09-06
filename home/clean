@@ -29,7 +29,3 @@ function __dkr-clean-help_ {
 	echo "  --all=false        Stops and removes all contain"
 	echo "  --help=false       Print usage"
 }
-
-export -f __dkr-clean
-export -f __dkr-clean-summary_
-export -f __dkr-clean-help_

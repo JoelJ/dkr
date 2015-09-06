@@ -21,7 +21,3 @@ function __dkr-rn-help_ {
 	echo ""
 	__dkr-rn-summary_
 }
-
-export -f __dkr-rn
-export -f __dkr-rn-summary_
-export -f __dkr-rn-help_
