@@ -59,6 +59,7 @@ function usage {
 	echo "Extensions:"
 	echo ""
 
+	column -t -s':' <<< "$(
 	for option in $(declare -F | grep -Eo "__dkr-.*"); do
 		if [[ "${option}" != *-summary_ ]] && [[ "${option}" != *-help_ ]]; then
 			set +e
@@ -67,12 +68,13 @@ function usage {
 			set -e
 
 			if [ "${exitCode}" == "0" ]; then
-				echo "    ${option:6} - $(eval ${option}-summary_)"
+				echo "    ${option:6} : $(eval ${option}-summary_)"
 			else
 				echo "    ${option:6}"
 			fi
 		fi
 	done
+	)"
 
 	echo ""
 	echo "See README for more information on extending dkr"
