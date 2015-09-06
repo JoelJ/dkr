@@ -1,6 +1,13 @@
 #!/bin/bash -e
 
 function dkr-clean {
+	if [[ "$@" =~ '--all' ]]; then
+		containers=$(docker ps -a)
+		2>/dev/null 1>/dev/null docker stop ${containers}
+	else
+		containers=$(docker ps -a | grep -E "Exited .*? ago" | awk '{ print $1 }')
+	fi
+
 	containers=$(docker ps -a | grep -E "Exited .*? ago" | awk '{ print $1 }')
 	if [ "$containers" != "" ]; then
 		docker rm ${containers}
@@ -19,5 +26,6 @@ function dkr-clean-help_ {
 	echo ""
 	dkr-clean-summary_
 	echo ""
+	echo "  --all=false        Stops and removes all contain"
 	echo "  --help=false       Print usage"
 }
