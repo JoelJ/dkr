@@ -2,7 +2,7 @@
 
 function dkr-rn {
 	set -m
-	docker run "$@" &
+	"${DKR_COMMAND}" run "$@" &
 	2>/dev/null 1>/dev/null dkr-portmap
 	2>/dev/null 1>/dev/null fg
 }
@@ -12,7 +12,7 @@ function dkr-rn-summary_ {
 }
 
 function dkr-rn-help_ {
-	docker run --help | sed "s#Usage:\s*docker run#Usage:  ${DKR_NAME} rn#g"
+	"${DKR_COMMAND}" run --help | sed "s#Usage:\s*docker run#Usage:  ${DKR_NAME} rn#g"
 	echo ""
 	dkr-rn-summary_
 }

@@ -2,13 +2,13 @@
 
 function dkr-cleani {
 	if [[ "$@" =~ '--all' ]]; then
-		images=$(docker images -q)
+		images=$("${DKR_COMMAND}" images -q)
 	else
-		images=$(docker images -q -f dangling=true)
+		images=$("${DKR_COMMAND}" images -q -f dangling=true)
 	fi
 
 	if [ "${images}" != "" ]; then
-		docker rmi ${images}
+		"${DKR_COMMAND}" rmi ${images}
 	else
 		err "Nothing to clean"
 	fi

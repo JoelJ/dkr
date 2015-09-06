@@ -2,15 +2,15 @@
 
 function dkr-clean {
 	if [[ "$@" =~ '--all' ]]; then
-		containers=$(docker ps -a)
-		2>/dev/null 1>/dev/null docker stop ${containers}
+		containers=$("${DKR_COMMAND}" ps -a)
+		2>/dev/null 1>/dev/null "${DKR_COMMAND}" stop ${containers}
 	else
-		containers=$(docker ps -a | grep -E "Exited .*? ago" | awk '{ print $1 }')
+		containers=$("${DKR_COMMAND}" ps -a | grep -E "Exited .*? ago" | awk '{ print $1 }')
 	fi
 
-	containers=$(docker ps -a | grep -E "Exited .*? ago" | awk '{ print $1 }')
+	containers=$("${DKR_COMMAND}" ps -a | grep -E "Exited .*? ago" | awk '{ print $1 }')
 	if [ "$containers" != "" ]; then
-		docker rm ${containers}
+		"${DKR_COMMAND}" rm ${containers}
 	else
 		err "Nothing to clean"
 	fi

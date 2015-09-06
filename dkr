@@ -5,6 +5,10 @@ if [ "${DKR_HOME}" == "" ]; then
 	export DKR_HOME=~/.dkr
 fi
 
+if [ "${DKR_COMMAND}" == "" ]; then
+	export DKR_COMMAND=docker
+fi
+
 function debug {
 	if [ "${DKR_DEBUG}" != "" ]; then
 		echo "$@" >&2
@@ -20,7 +24,7 @@ function usage {
 	echo ""
 	echo "Dkr exposes all the standard docker commands:"
 
-	docker --help | sed "s:docker COMMAND --help:${DKR_NAME} COMMAND --help:g" | /usr/bin/tail -n +3 | /usr/bin/tail -n +5
+	"${DKR_COMMAND}" --help | sed "s:docker COMMAND --help:${DKR_NAME} COMMAND --help:g" | /usr/bin/tail -n +3 | /usr/bin/tail -n +5
 
 	echo ""
 	echo "Extensions:"
@@ -95,9 +99,8 @@ if [ "$exitCode" == "0" ]; then
 	fi
 else
 	if [[ "$@" =~ '--help' ]]; then
-		docker "$@" | sed "s#Usage:\s*docker#Usage:  ${DKR_NAME}#g"
+		"${DKR_COMMAND}" "$@" | sed "s#Usage:\s*docker#Usage:  ${DKR_NAME}#g"
 	else
-		echo "nope"
-		docker "$@"
+		"${DKR_COMMAND}" "$@"
 	fi
 fi
