@@ -95,11 +95,6 @@ export is_help="$(is_help "$@")"
 export DKR_COMMAND="$(find_command "$@")"
 debug "found command: $DKR_COMMAND"
 
-if [ "${DKR_COMMAND}" == "" ]; then
-	usage
-	exit 1
-fi
-
 #
 # Source the built ins. Even though they are sourced in the bash profile,
 # functions aren't exported, and each shell does it differently.
@@ -122,6 +117,11 @@ if find "${DKR_HOME}" -mindepth 1 -print -quit | grep -q .; then
 			source ${file}
 		fi
 	done
+fi
+
+if [ "${DKR_COMMAND}" == "" ]; then
+	usage
+	exit 1
 fi
 
 debug "Checking for: __dkr-${DKR_COMMAND}"
