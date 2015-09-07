@@ -1,0 +1,5 @@
+#!/bin/bash
+
+function __dkr-listCommands {
+	$0 --help | grep -E "^\s+" | grep -vE "\s+-" | awk '{print $1}' | sort | uniq
+}
