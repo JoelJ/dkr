@@ -1,0 +1,66 @@
+#!/bin/bash
+
+function __dkr-sh {
+	parameter="$(find_command "$@")"
+	if [ "${parameter}" == "" ]; then
+		runningContainerIds="$("${DKR_DOCKER_COMMAND}" ps -q)"
+		if [ "${runningContainerIds}" == "" ]; then
+			err "No running containers"
+			exit 0
+		fi
+		runningContainers="$("${DKR_DOCKER_COMMAND}" inspect --format '{{.Id}}::{{.Name}}::{{.Config.Image}}' ${runningContainerIds})"
+
+		column -t -s'::' <<< "$(
+
+		echo "#::ID::Name::Image::Tag"
+
+		count=1
+		for container in ${runningContainers}; do
+			id="$(echo "${container}" | awk -F'::' '{print $1}')"
+			name="$(echo "${container}" | awk -F'::' '{print $2}')"
+			image="$(echo "${container}" | awk -F'::' '{print $3}')"
+			echo "${count}::${container:0:12}::${name:1}::${image}"
+
+			count=$(expr ${count} + 1)
+		done
+		)"
+		echo ""
+		read -p "Choose a container to attach to: " number
+
+		count=1
+		for container in ${runningContainers}; do
+			id="$(echo "${container}" | awk -F'::' '{print $1}')"
+			name="$(echo "${container}" | awk -F'::' '{print $2}')"
+
+			if [ "${count}" == "${number}" ] || [ "${id}" == "${number}" ] || [ "${name:1}" == "${number}" ]; then
+				err "Attaching to ${name:1}"
+				parameter="${id}"
+				break
+			fi
+			count=$(expr ${count} + 1)
+		done
+
+		if [ "${parameter}" == "" ]; then
+			err "Not a valid option"
+			exit 1
+		fi
+	fi
+
+	"${DKR_DOCKER_COMMAND}" exec -it "${parameter}" sh
+}
+
+function __dkr-sh-summary_ {
+	echo "Creates a shell session for a running container"
+}
+
+function __dkr-sh-help_ {
+	echo ""
+	echo "Usage:  ${DKR_NAME} sh [CONTAINER ID OR NAME]"
+	echo ""
+	__dkr-rm-summary_
+	echo ""
+	echo "If no parameters are specified, you will be prompted for what container you want to attach to."
+	echo "If a parameter is specified, then a shell session with be exec'd on that container."
+	echo ""
+	echo "  --help=false       Print usage"
+}
