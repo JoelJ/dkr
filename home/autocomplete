@@ -1,0 +1,10 @@
+#!/bin/bash
+
+function __dkr_autocomplete {
+    local cur=${COMP_WORDS[COMP_CWORD]}
+    local commands=$(${DKR_BIN_PATH} listCommands)
+    COMPREPLY=($(compgen -W '${commands[@]}' -- "$cur"))
+    return 0
+}
+
+complete -o default -F __dkr_autocomplete $(basename "${DKR_BIN_PATH}")
