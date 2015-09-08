@@ -47,7 +47,7 @@ function __listCommands {
 
 function __listFlags {
 	firstResult=$("${DKR_BIN_PATH}" $1 --help | grep -oE "^\s+-[a-zA-Z_-]*" | xargs )
-	secondResult=$("${DKR_BIN_PATH}" $1 --help | grep --color=always -oE ",\s+-[a-zA-Z_-]*" | awk '{ print $2 }' | xargs )
+	secondResult=$("${DKR_BIN_PATH}" $1 --help | grep -oE ",\s+-[a-zA-Z_-]*" | awk '{ print $2 }' | xargs )
 
 	echo "${firstResult}
 ${secondResult}" | sort | uniq
