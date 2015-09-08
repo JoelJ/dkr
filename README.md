@@ -1,3 +1,5 @@
+This is a small project that started as a few aliases, and then grew into a small framework.
+
 Extendable `docker` cli wrapper. Allows the user to easily add new functionality.
 
 Any command that doesn't exist in `dkr` automatically gets delegated to `docker`.
