@@ -55,7 +55,7 @@ function __dkr-sh-summary_ {
 
 function __dkr-sh-help_ {
 	echo ""
-	echo "Usage:  ${DKR_NAME} sh [CONTAINER ID OR NAME]"
+	echo "Usage:  ${DKR_NAME} sh [CONTAINER]"
 	echo ""
 	__dkr-rm-summary_
 	echo ""

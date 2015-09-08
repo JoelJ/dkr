@@ -48,7 +48,7 @@ function __dkr-rm-summary_ {
 
 function __dkr-rm-help_ {
 	echo ""
-	echo "Usage:  ${DKR_NAME} rm [CONTAINER ID OR NAME, ...]"
+	echo "Usage:  ${DKR_NAME} rm [CONTAINER, ...]"
 	echo ""
 	__dkr-rm-summary_
 	echo ""
