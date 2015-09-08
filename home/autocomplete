@@ -1,12 +1,28 @@
 #!/bin/bash
 
 function __dkr_autocomplete {
+    set +e
     local cur_command=${COMP_WORDS[1]}
     local cur=${COMP_WORDS[COMP_CWORD]}
 
-    local commands
+    local commands=""
     if [ "${COMP_CWORD}" -gt 1 ]; then
-        commands=""
+        case "${cur}" in
+            -* )
+                commands=$(${DKR_BIN_PATH} listFlags ${cur_command})
+                ;;
+            * )
+                "${DKR_BIN_PATH}" "${cur_command}" --help | grep -E "Usage:.*CONTAINER" 2>/dev/null 1>/dev/null
+                if [ "$?" == 0 ]; then
+                    commands=$(__all_containers)
+                else
+                    "${DKR_BIN_PATH}" "${cur_command}" --help | grep -E "Usage:.*IMAGE" 2>/dev/null 1>/dev/null
+                    if [ "$?" == 0 ]; then
+                        commands=$(__all_images)
+                    fi
+                fi
+                ;;
+        esac
     else
         commands=$(${DKR_BIN_PATH} listCommands)
     fi
@@ -14,5 +30,15 @@ function __dkr_autocomplete {
     return 0
 }
 
-complete -o default -F __dkr_autocomplete $(basename "${DKR_BIN_PATH}")
+function __all_containers {
+    for id in $("${DKR_DOCKER_COMMAND}" ps -aq); do
+        name="$("${DKR_DOCKER_COMMAND}" inspect -f "{{.Name}}" ${id})"
+        echo ${name:1}
+    done
+}
+
+function __all_images {
+    "${DKR_DOCKER_COMMAND}" images | awk '{ print $1":"$2 }' | sort | uniq
+}
+complete -o default -F __dkr_autocomplete "${DKR_NAME}"
 complete -o default -F __dkr_autocomplete "${DKR_BIN_PATH}"

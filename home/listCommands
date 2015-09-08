@@ -3,3 +3,11 @@
 function __dkr-listCommands {
 	$0 --help | grep -E "^\s+" | grep -vE "\s+-" | awk '{print $1}' | sort | uniq
 }
+
+function __dkr-listFlags {
+	firstResult=$($0 $1 --help | grep -oE "^\s+-[a-zA-Z_-]*" | xargs )
+	secondResult=$($0 $1 --help | grep --color=always -oE ",\s+-[a-zA-Z_-]*" | awk '{ print $2 }' | xargs )
+
+	echo "${firstResult}
+${secondResult}" | sort | uniq
+}
