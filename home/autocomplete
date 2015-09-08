@@ -9,7 +9,7 @@ function __dkr_autocomplete {
     if [ "${COMP_CWORD}" -gt 1 ]; then
         case "${cur}" in
             -* )
-                commands=$(${DKR_BIN_PATH} listFlags ${cur_command})
+                commands=$(__listFlags ${cur_command})
                 ;;
             * )
                 "${DKR_BIN_PATH}" "${cur_command}" --help | grep -E "Usage:.*CONTAINER" 2>/dev/null 1>/dev/null
@@ -24,7 +24,7 @@ function __dkr_autocomplete {
                 ;;
         esac
     else
-        commands=$(${DKR_BIN_PATH} listCommands)
+        commands=$(__listCommands)
     fi
     COMPREPLY=($(compgen -W '${commands[@]}' -- "$cur"))
     return 0
@@ -40,5 +40,18 @@ function __all_containers {
 function __all_images {
     "${DKR_DOCKER_COMMAND}" images | awk '{ print $1":"$2 }' | sort | uniq
 }
+
+function __listCommands {
+	"${DKR_BIN_PATH}" --help | grep -E "^\s+" | grep -vE "\s+-" | awk '{print $1}' | sort | uniq
+}
+
+function __listFlags {
+	firstResult=$("${DKR_BIN_PATH}" $1 --help | grep -oE "^\s+-[a-zA-Z_-]*" | xargs )
+	secondResult=$("${DKR_BIN_PATH}" $1 --help | grep --color=always -oE ",\s+-[a-zA-Z_-]*" | awk '{ print $2 }' | xargs )
+
+	echo "${firstResult}
+${secondResult}" | sort | uniq
+}
+
 complete -o default -F __dkr_autocomplete "${DKR_NAME}"
 complete -o default -F __dkr_autocomplete "${DKR_BIN_PATH}"
