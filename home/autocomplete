@@ -53,5 +53,5 @@ function __listFlags {
 ${secondResult}" | sort | uniq
 }
 
-complete -o default -F __dkr_autocomplete "${DKR_NAME}"
+complete -o default -F __dkr_autocomplete $(basename "${DKR_BIN_PATH}")
 complete -o default -F __dkr_autocomplete "${DKR_BIN_PATH}"
