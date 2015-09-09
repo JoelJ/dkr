@@ -44,6 +44,13 @@ function __dkr-sh {
 			err "Not a valid option"
 			exit 1
 		fi
+	elif [ "${parameter}" == "-" ]; then
+		parameter=$("${DKR_DOCKER_COMMAND}" ps --latest --quiet)
+
+		if [ "${parameter}" == "" ]; then
+			err "No 'latest' container in history"
+			exit 2
+		fi
 	fi
 
 	"${DKR_DOCKER_COMMAND}" exec -it "${parameter}" sh
