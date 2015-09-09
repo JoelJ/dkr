@@ -15,7 +15,7 @@ export -f err
 function find_command {
 	debug "called find_command"
 	for arg in "$@"; do
-		if [[ "${arg}" == -* ]]; then
+		if [[ "${arg}" == -* ]] && [ "${arg}" != "-" ]; then
 			debug "not using ${arg}"
 			continue
 		else
