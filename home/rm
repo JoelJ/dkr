@@ -1,21 +1,34 @@
-#!/bin/bash -e
+#!/bin/bash
 
 function __dkr-rm {
-	params="$@"
+	force=false
+	params=""
+	while [ "$1" != "" ]; do
+		case "$1" in
+			-f)
+				force=true
+				;;
+			--force)
+				force=true
+				;;
+			-)
+				params="${params} $("${DKR_DOCKER_COMMAND}" ps --latest --quiet)"
+				;;
+			-*)
+				err "Unknown flag: $1"
+				exit 1
+				;;
+			*)
+				params="${params} $1"
+		esac
+		shift
+	done
+
 	if [ "${params}" == "" ]; then
-		params="$("${DKR_DOCKER_COMMAND}" ps -aq)"
+		params="${params} $("${DKR_DOCKER_COMMAND}" ps --all --quiet)"
 	fi
 
-	if [ "$1" == "-f" ]; then
-		shift
-		for name in ${params}; do
-			containerId="$(${DKR_DOCKER_COMMAND} inspect --format '{{.Id}}' ${name})"
-			containerName="$(${DKR_DOCKER_COMMAND} inspect --format '{{.Name}}' ${name})"
-			"${DKR_DOCKER_COMMAND}" stop "${containerId}" > /dev/null
-			"${DKR_DOCKER_COMMAND}" rm "${containerId}" > /dev/null
-			echo "Removed: ${containerName:1} (${containerId:0:12})"
-		done
-	else
+	if [ "${force}" != "true" ]; then
 		echo "Are you sure you want to stop and delete the following containers?"
 		for name in ${params}; do
 			containerId="$(${DKR_DOCKER_COMMAND} inspect --format '{{.Id}}' ${name})"
@@ -26,19 +39,23 @@ function __dkr-rm {
 		read -p "[y/N] " yn
 		case ${yn} in
 			[Yy]* )
-				for name in ${params}; do
-					containerId="$(${DKR_DOCKER_COMMAND} inspect --format '{{.Id}}' ${name})"
-					containerName="$(${DKR_DOCKER_COMMAND} inspect --format '{{.Name}}' ${name})"
-					"${DKR_DOCKER_COMMAND}" stop "${containerId}" > /dev/null
-					"${DKR_DOCKER_COMMAND}" rm "${containerId}" > /dev/null
-					echo "Removed: ${containerName:1} (${containerId:0:12})"
-				done
 				;;
 			* )
 				echo "Nothing removed"
+				exit 0
 				;;
 		esac
 	fi
+
+	for name in ${params}; do
+		inspect="$(${DKR_DOCKER_COMMAND} inspect --format '{{.Id}}:{{.Name}}' ${name})"
+		containerId=$(echo "${inspect}" | awk -F':' '{print $1}')
+		containerName=$(echo "${inspect}" | awk -F':' '{print $2}')
+
+		"${DKR_DOCKER_COMMAND}" stop "${containerId}" > /dev/null
+		"${DKR_DOCKER_COMMAND}" rm "${containerId}" > /dev/null
+		echo "Removed: ${containerName:1} (${containerId:0:12})"
+	done
 }
 
 function __dkr-rm-summary_ {
