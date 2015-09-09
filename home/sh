@@ -53,7 +53,15 @@ function __dkr-sh {
 		fi
 	fi
 
-	"${DKR_DOCKER_COMMAND}" exec -it "${parameter}" sh
+	name=$("${DKR_DOCKER_COMMAND}" inspect -f '{{.Name}} ({{.Config.Image}})' "${parameter}")
+
+	if "${DKR_DOCKER_COMMAND}" exec "${parameter}" which bash > /dev/null; then
+		echo "Bashing into ${name:1}"
+		"${DKR_DOCKER_COMMAND}" exec -it "${parameter}" bash
+	else
+		echo "Shelling into ${name:1}"
+		"${DKR_DOCKER_COMMAND}" exec -it "${parameter}" sh
+	fi
 }
 
 function __dkr-sh-summary_ {
