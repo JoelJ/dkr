@@ -1,0 +1,19 @@
+#!/bin/bash
+
+function __dkr-stats {
+	if [ "$1" == "" ]; then
+		names=$("${DKR_DOCKER_COMMAND}" ps --format "{{.Names}}")
+		if [ "${names}" != "" ]; then
+			"${DKR_DOCKER_COMMAND}" stats ${names}
+		else
+			echo "No running containers"
+		fi
+	else
+		"${DKR_DOCKER_COMMAND}" stats "$@"
+	fi
+
+}
+
+function __dkr-stats-summary_ {
+	echo "Displays stats for all running containers if no arguments are provided"
+}
