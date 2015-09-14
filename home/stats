@@ -1,19 +1,43 @@
 #!/bin/bash
 
 function __dkr-stats {
-	if [ "$1" == "" ]; then
-		names=$("${DKR_DOCKER_COMMAND}" ps --format "{{.Names}}")
-		if [ "${names}" != "" ]; then
-			"${DKR_DOCKER_COMMAND}" stats ${names}
+	params=""
+	containers=""
+	while [ "$1" != "" ]; do
+		case "$1" in
+			-*)
+				params="${params} $1"
+				;;
+			*)
+				containers="${containers} $1"
+		esac
+		shift
+	done
+
+	if [ "$containers" != "" ]; then
+		"${DKR_DOCKER_COMMAND}" stats ${params} ${containers}
+	else
+		running_names=$("${DKR_DOCKER_COMMAND}" ps --format "{{.Names}}")
+		if [ "${running_names}" != "" ]; then
+			"${DKR_DOCKER_COMMAND}" stats ${params} ${running_names}
 		else
 			echo "No running containers"
 		fi
-	else
-		"${DKR_DOCKER_COMMAND}" stats "$@"
 	fi
 
 }
 
 function __dkr-stats-summary_ {
-	echo "Displays stats for all running containers if no arguments are provided"
+	echo "Displays stats for all running containers if containers are specified"
+}
+
+function __dkr-stats-help_ {
+echo ""
+echo "Usage:	${DKR_NAME} stats [OPTIONS] [CONTAINER] [CONTAINER...]"
+echo ""
+echo "Display a live stream of one or more containers' resource usage statistics"
+	__dkr-stats-summary_
+echo ""
+echo "  --help=false       Print usage"
+echo "  --no-stream=false  Disable streaming stats and only pull the first result"
 }
