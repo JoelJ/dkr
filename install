@@ -7,18 +7,20 @@ function usage {
 	echo "$0 [OPTIONS]"
 	echo ""
 	column -t -s':' <<< "
-	--bin-file=/usr/local/var/dkr : The location the dkr bin file should be installed.
-	--bin-path=/usr/local/bin/dkr : The location the built-in extention files should be installed to.
-	--home=~/.dkr : The location user extention files should be put.
-	--profile=~/.profile : The location of the user's bash profile file.
+	--bin-file=${DKR_BIN_DIR_PATH} : The location the dkr bin file should be installed.
+	--bin-path=${DKR_BIN_PATH} : The location the built-in extention files should be installed to.
+	--home=${DKR_HOME} : The location user extention files should be put.
+	--profile=${DKR_PROFILE} : The location of the user's bash profile file.
 	: A simple 'source' line for the dkr profile file will be added to this file the first time the installer is run.
-	--dkr-profile-file=~/.dkrprofile : The location the dkr profile should be installed to.
+	--dkr-profile-file=${DKR_PROFILE_FILE} : The location the dkr profile should be installed to.
 	: This file ensures that all the environment variables and functions required are available in the bash session.
 	--docker-command=$(which docker) : The location of the docker bin.
 	--debug : Prints debug information
 	--help : Prints this help file.
 	"
 }
+
+help=false
 while [ "$1" != "" ]; do
 	case "$1" in
 		--bin-file)
@@ -42,7 +44,7 @@ while [ "$1" != "" ]; do
 			shift
 			;;
 		--dkr-profile-file)
-			if [ "$DKR_PROFILE" != "$2" ]; then
+			if [ "$DKR_PROFILE_FILE" != "$2" ] && [ "$DKR_PROFILE_FILE" != "" ]; then
 				echo "WARNING: Cannot use flag '--dkr-profile-file' if it's been previously set. Ignoring."
 			else
 				DKR_PROFILE_FILE="$2"
@@ -61,8 +63,7 @@ while [ "$1" != "" ]; do
 			NO_PULL=true
 			;;
 		--help)
-			usage
-			exit 0
+			help=true
 			;;
 		*)
 			echo "Unknown flag: '$1'"
@@ -93,6 +94,17 @@ if [ "${DKR_PROFILE_FILE}" == "" ]; then
 fi
 if [ "${DKR_DOCKER_COMMAND}" == "" ]; then
 	DKR_DOCKER_COMMAND="$(which docker)"
+fi
+
+if [ "${help}" == "true" ]; then
+	export DKR_BIN_DIR_PATH
+	export DKR_BIN_PATH
+	export DKR_HOME
+	export DKR_PROFILE
+	export DKR_PROFILE_FILE
+	export DKR_DOCKER_COMMAND
+	usage
+	exit 0
 fi
 
 if [ -d .git ]; then
