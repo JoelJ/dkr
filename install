@@ -74,7 +74,11 @@ while [ "$1" != "" ]; do
 done
 
 if [ "${DKR_BIN_DIR_PATH}" == "" ]; then
-	DKR_BIN_DIR_PATH=/usr/local/var/dkr
+	if [ -d ~/bin ]; then
+		DKR_BIN_DIR_PATH=~/bin	
+	else
+		DKR_BIN_DIR_PATH=/usr/local/var/dkr
+	fi
 fi
 if [ "${DKR_BIN_PATH}" == "" ]; then
 	DKR_BIN_PATH=/usr/local/bin/dkr
