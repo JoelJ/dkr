@@ -26,11 +26,11 @@ help=false
 while [ "$1" != "" ]; do
 	case "$1" in
 		--bin-file)
-			DKR_BIN_DIR_PATH="$2"
+			DKR_BIN_PATH="$2"
 			shift
 			;;
 		--bin-path)
-			DKR_BIN_PATH="$2"
+			DKR_BIN_DIR_PATH="$2"
 			shift
 			;;
 		--home)
@@ -157,7 +157,7 @@ if [ "${installed}" != "true" ]; then
 	echo "# ADDED BY DKR" >> ${DKR_PROFILE}
 	echo "if [ -f \"${DKR_PROFILE_FILE}\" ]; then" >> ${DKR_PROFILE}
 	echo "	source \"${DKR_PROFILE_FILE}\"" >> ${DKR_PROFILE}
-	echo "fi"
+	echo "fi" >> ${DKR_PROFILE}
 fi
 
 # (Re)generate the DKR_PROFILE_FILE which should be sourced into the bash profile
