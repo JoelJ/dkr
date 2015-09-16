@@ -87,7 +87,7 @@ if [ "${DKR_BIN_PATH}" == "" ]; then
 		# for compatibility with existing installs
 		DKR_BIN_PATH=/usr/local/bin/dkr
 	else
-		DKR_BIN_PATH=~/bin/dkrn
+		DKR_BIN_PATH=~/bin/dkr
 	fi
 fi
 if [ "${DKR_HOME}" == "" ]; then
