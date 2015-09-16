@@ -7,8 +7,8 @@ function usage {
 	echo "$0 [OPTIONS]"
 	echo ""
 	column -t -s':' <<< "
-	--bin-file=${DKR_BIN_DIR_PATH} : The location the dkr bin file should be installed. This should be on the PATH.
-	--bin-path=${DKR_BIN_PATH} : The location the built-in extention files should be installed to.
+	--bin-file=${DKR_BIN_PATH} : The location the dkr bin file should be installed. This should be on the PATH.
+	--bin-path=${DKR_BIN_DIR_PATH} : The location the built-in extention files should be installed to.
 	: These will be deleted and reinstalled every time the install script is run.
 	: User extensions should be put in the DKR_HOME directory instead.
 	--home=${DKR_HOME} : The location user extention files should be put.
@@ -77,7 +77,7 @@ done
 
 if [ "${DKR_BIN_DIR_PATH}" == "" ]; then
 	if [ -d ~/bin ]; then
-		DKR_BIN_DIR_PATH=~/bin	
+		DKR_BIN_DIR_PATH=~/bin/.dkr_builtins
 	else
 		DKR_BIN_DIR_PATH=/usr/local/var/dkr
 	fi
@@ -87,7 +87,7 @@ if [ "${DKR_BIN_PATH}" == "" ]; then
 		# for compatibility with existing installs
 		DKR_BIN_PATH=/usr/local/bin/dkr
 	else
-		DKR_BIN_PATH=~/.dkr_bin
+		DKR_BIN_PATH=~/bin/dkrn
 	fi
 fi
 if [ "${DKR_HOME}" == "" ]; then
@@ -155,7 +155,9 @@ if [ "${installed}" != "true" ]; then
 	fi
 
 	echo "# ADDED BY DKR" >> ${DKR_PROFILE}
-	echo "source \"${DKR_PROFILE_FILE}\"" >> ${DKR_PROFILE}
+	echo "if [ -f \"${DKR_PROFILE_FILE}\" ]; then" >> ${DKR_PROFILE}
+	echo "	source \"${DKR_PROFILE_FILE}\"" >> ${DKR_PROFILE}
+	echo "fi"
 fi
 
 # (Re)generate the DKR_PROFILE_FILE which should be sourced into the bash profile
