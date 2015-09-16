@@ -34,7 +34,7 @@ while [ "$1" != "" ]; do
 			shift
 			;;
 		--profile)
-			if [ "$DKR_PROFILE" != "$2" ]; then
+			if [ "$DKR_PROFILE" != "$2" ] && [ "$DKR_PROFILE" != "" ]; then
 				echo "WARNING: Cannot use flag '--profile' if it's been previously set. Ignoring."
 			else
 				DKR_PROFILE="$2"
