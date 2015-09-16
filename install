@@ -82,7 +82,11 @@ if [ "${DKR_HOME}" == "" ]; then
 	DKR_HOME=~/.dkr
 fi
 if [ "${DKR_PROFILE}" == "" ]; then
-	DKR_PROFILE=~/.profile
+	if [ -f ~/.bashrc ]; then
+		DKR_PROFILE=~/.bashrc
+	else
+		DKR_PROFILE=~/.profile
+	fi
 fi
 if [ "${DKR_PROFILE_FILE}" == "" ]; then
 	DKR_PROFILE_FILE=~/.dkrprofile
